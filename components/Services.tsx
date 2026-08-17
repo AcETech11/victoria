@@ -1,8 +1,5 @@
 "use client";
 
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-
 const services = [
   { id: "01", title: "Motion Direction", desc: "Bringing static brands to life through rhythmic movement." },
   { id: "02", title: "Visual Identity", desc: "Crafting modern aesthetics for digital-first companies." },

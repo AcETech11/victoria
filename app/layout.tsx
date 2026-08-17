@@ -4,7 +4,6 @@ import "./globals.css";
 import Noise from "@/components/Noise";
 import CustomCursor from "@/components/Cursor";
 
-
 const inter = Inter({ 
   subsets: ['latin'], 
   variable: '--font-sans' 
@@ -17,6 +16,7 @@ const playfair = Playfair_Display({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://victoria.design"),
   title: "Victoria | Motion & Visual Direction",
   description: "Senior Motion Designer specializing in cinematic brand experiences and kinetic visual identities.",
   openGraph: {
@@ -26,7 +26,7 @@ export const metadata: Metadata = {
     siteName: "Victoria Portfolio",
     images: [
       {
-        url: "/og-image.jpg", // Create a 1200x630px image in your /public folder
+        url: "/og-image.jpg",
         width: 1200,
         height: 630,
       },

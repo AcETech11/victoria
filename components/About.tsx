@@ -2,6 +2,7 @@
 
 import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
+import { WordProps } from "@/lib/types";
 
 const paragraph = "I transform static concepts into kinetic experiences. My work lives at the intersection of intentional graphic structure and fluid motion design, helping brands tell stories that don't just sit still—they breathe.";
 
@@ -37,7 +38,7 @@ export default function About() {
   );
 }
 
-function Word({ children, range, progress }: any) {
+function Word({ children, range, progress }: WordProps) {
   const opacity = useTransform(progress, range, [0.2, 1]);
   return (
     <span className="relative mr-3 mt-2">
