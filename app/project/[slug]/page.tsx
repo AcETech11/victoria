@@ -18,19 +18,25 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   if (!project) return { title: "Project Not Found" };
 
+  const description = project.category
+    ? `Case study for ${project.title} - ${project.category}`
+    : `Case study for ${project.title}`;
+
   return {
     title: `${project.title} | Victoria Design`,
-    description: `Case study for ${project.title} - ${project.category}`,
+    description,
     openGraph: {
       title: project.title,
       description: `View the motion and design process behind ${project.title}.`,
-      images: [
-        {
-          url: project.image,
-          width: 1200,
-          height: 630,
-        },
-      ],
+      images: project.image
+        ? [
+            {
+              url: project.image,
+              width: 1200,
+              height: 630,
+            },
+          ]
+        : [],
     },
   };
 }
@@ -66,7 +72,7 @@ export default async function ProjectPage({ params }: Props) {
           ← Back to Works
         </Link>
         <div className="font-mono text-xs uppercase tracking-widest text-stone-500">
-          {project.category}
+          {project.category || project.projectType}
         </div>
       </nav>
 
@@ -104,7 +110,7 @@ export default async function ProjectPage({ params }: Props) {
           <h1 className="text-7xl font-bold tracking-tighter mb-8 leading-[0.9]">{project.title}</h1>
           
           <div className="prose prose-invert prose-stone max-w-none mb-12">
-            <PortableText value={project.description} />
+            {project.description ? <PortableText value={project.description} /> : null}
           </div>
 
           {project.externalLink && (

@@ -3,8 +3,9 @@
 import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
+import { SanityProject } from "@/lib/types";
 
-export default function WorkGrid({ projects }: { projects: any[] }) {
+export default function WorkGrid({ projects }: { projects: SanityProject[] }) {
   // 1. If no projects exist, show placeholder
   if (!projects || projects.length === 0) {
     return (
@@ -37,11 +38,13 @@ export default function WorkGrid({ projects }: { projects: any[] }) {
 
         {/* The Bento Grid Logic */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6 auto-rows-[350px] md:auto-rows-[400px]">
-          {projects.map((project: any, i: number) => {
+          {projects.map((project: SanityProject, i: number) => {
             // Pattern: Large, Small, Small, Large, Full-Width
             const spanClass = 
               i === 0 || i === 3 ? "md:col-span-7" : 
               i === 4 ? "md:col-span-12" : "md:col-span-5";
+
+            const imageUrl = project.mainImage || project.image;
 
             return (
               <motion.div
@@ -55,13 +58,17 @@ export default function WorkGrid({ projects }: { projects: any[] }) {
                 <Link href={`/project/${project.slug}`} className="block w-full h-full">
                   {/* Media Layer */}
                   <div className="absolute inset-0 transition-transform duration-1000 ease-out group-hover:scale-105">
-                    {project.mainImage && (
+                    {imageUrl ? (
                       <Image
-                        src={project.mainImage}
+                        src={imageUrl}
                         alt={project.title}
                         fill
                         className="object-cover opacity-50 group-hover:opacity-70 transition-opacity duration-500"
                       />
+                    ) : (
+                      <div className="w-full h-full bg-stone-900 flex items-center justify-center text-stone-700 font-mono text-xs italic">
+                        Media Preview Unavailable
+                      </div>
                     )}
                   </div>
 

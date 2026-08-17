@@ -4,9 +4,10 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
+import { SanityProject } from "@/lib/types";
 
 interface ProjectArchiveProps {
-  projects: any[];
+  projects: SanityProject[];
 }
 
 export default function ProjectArchive({ projects }: ProjectArchiveProps) {

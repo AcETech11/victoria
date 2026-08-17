@@ -3,15 +3,23 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
+import { SanityProject } from "@/lib/types";
 
-export default function ProjectCard({ project, index }: { project: any; index: number }) {
+interface ProjectCardProps {
+  project: SanityProject & { gridClass?: string };
+  index: number;
+}
+
+export default function ProjectCard({ project, index }: ProjectCardProps) {
+  const imageUrl = project.image || project.mainImage;
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.8, delay: index * 0.1, ease: [0.215, 0.61, 0.355, 1] }}
-      className={`group relative overflow-hidden rounded-3xl bg-stone-900 border border-white/5 ${project.gridClass}`}
+      className={`group relative overflow-hidden rounded-3xl bg-stone-900 border border-white/5 ${project.gridClass || ''}`}
     >
       <Link href={`/project/${project.slug}`} className="block w-full h-full">
         {/* Priority: Video for Motion, Image for Graphic */}
@@ -24,13 +32,17 @@ export default function ProjectCard({ project, index }: { project: any; index: n
             playsInline
             className="w-full h-full object-cover opacity-50 group-hover:opacity-100 group-hover:scale-105 transition-all duration-[1.2s] ease-expo"
           />
-        ) : (
+        ) : imageUrl ? (
           <Image
-            src={project.image || "/placeholder.jpg"}
+            src={imageUrl}
             alt={project.title}
             fill
             className="object-cover opacity-50 group-hover:opacity-100 group-hover:scale-105 transition-all duration-[1.2s] ease-expo"
           />
+        ) : (
+          <div className="w-full h-full bg-stone-900 flex items-center justify-center text-stone-700 font-mono text-xs italic">
+            Media Preview Unavailable
+          </div>
         )}
 
         {/* Dynamic Overlay */}
@@ -38,7 +50,7 @@ export default function ProjectCard({ project, index }: { project: any; index: n
           <div className="flex justify-between items-end overflow-hidden">
             <div className="transform translate-y-8 group-hover:translate-y-0 transition-transform duration-500">
               <span className="text-accent font-mono text-[10px] uppercase tracking-widest block mb-2">
-                {project.category}
+                {project.category || project.projectType || "Motion"}
               </span>
               <h3 className="text-3xl font-bold text-white tracking-tighter">
                 {project.title}

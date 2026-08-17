@@ -2,6 +2,7 @@
 
 import { useRef, useEffect, useState } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
+import { ProcessCardProps } from "@/lib/types";
 
 const steps = [
   { title: "Discovery", desc: "Understanding the brand DNA and narrative goals.", color: "bg-stone-800" },
@@ -69,7 +70,7 @@ export default function Process() {
   );
 }
 
-function ProcessCard({ step, index, progress }: any) {
+function ProcessCard({ step, index, progress }: ProcessCardProps) {
   // Logic to make cards fade/scale individually as they pass the center
   const stepInterval = 1 / steps.length;
   const start = index * stepInterval;
@@ -92,4 +93,3 @@ function ProcessCard({ step, index, progress }: any) {
     </motion.div>
   );
 }
-

@@ -1,31 +1,62 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import { motion, useSpring } from "framer-motion";
+
+function subscribePointer(callback: () => void) {
+  const mediaQuery = window.matchMedia("(pointer: fine)");
+  mediaQuery.addEventListener("change", callback);
+  return () => mediaQuery.removeEventListener("change", callback);
+}
+
+function getPointerSnapshot() {
+  return window.matchMedia("(pointer: fine)").matches;
+}
+
+function getPointerServerSnapshot() {
+  return false;
+}
 
 export default function CustomCursor() {
   const [cursorType, setCursorType] = useState("default");
+  const isPointerFine = useSyncExternalStore(
+    subscribePointer,
+    getPointerSnapshot,
+    getPointerServerSnapshot
+  );
+
   const mouseX = useSpring(0, { stiffness: 500, damping: 28 });
   const mouseY = useSpring(0, { stiffness: 500, damping: 28 });
 
   useEffect(() => {
+    if (!isPointerFine) return;
+
     const moveMouse = (e: MouseEvent) => {
       mouseX.set(e.clientX);
       mouseY.set(e.clientY);
     };
 
-    const handleHover = () => {
-      const hovers = document.querySelectorAll("a, button, .group");
-      hovers.forEach((el) => {
-        el.addEventListener("mouseenter", () => setCursorType("hover"));
-        el.addEventListener("mouseleave", () => setCursorType("default"));
-      });
-    };
+    const handleMouseEnter = () => setCursorType("hover");
+    const handleMouseLeave = () => setCursorType("default");
+
+    const elements = document.querySelectorAll("a, button, .group");
+    elements.forEach((el) => {
+      el.addEventListener("mouseenter", handleMouseEnter);
+      el.addEventListener("mouseleave", handleMouseLeave);
+    });
 
     window.addEventListener("mousemove", moveMouse);
-    handleHover();
-    return () => window.removeEventListener("mousemove", moveMouse);
-  }, [mouseX, mouseY]);
+
+    return () => {
+      window.removeEventListener("mousemove", moveMouse);
+      elements.forEach((el) => {
+        el.removeEventListener("mouseenter", handleMouseEnter);
+        el.removeEventListener("mouseleave", handleMouseLeave);
+      });
+    };
+  }, [isPointerFine, mouseX, mouseY]);
+
+  if (!isPointerFine) return null;
 
   return (
     <motion.div

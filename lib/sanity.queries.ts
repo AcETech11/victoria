@@ -1,11 +1,6 @@
-import { createClient, groq } from "next-sanity";
-
-export const client = createClient({
-  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
-  dataset: "production",
-  apiVersion: "2026-01-15",
-  useCdn: true,
-});
+import { groq } from "next-sanity";
+import { client } from "@/sanity/lib/client";
+import { projectId } from "@/sanity/env";
 
 // 1. Unified Query for the Homepage (Bento + Archive)
 export const getAllProjectsQuery = groq`*[_type == "project"] | order(_createdAt desc) {
@@ -21,22 +16,35 @@ export const getAllProjectsQuery = groq`*[_type == "project"] | order(_createdAt
 }`;
 
 export async function getAllProjects() {
-  return await client.fetch(getAllProjectsQuery);
+  if (!projectId || projectId === 'unconfigured') return [];
+  try {
+    const data = await client.fetch(getAllProjectsQuery);
+    return data || [];
+  } catch (error) {
+    console.warn("Failed to fetch projects from Sanity:", error);
+    return [];
+  }
 }
 
 // 2. Specific Query for the Case Study Page
 export async function getProjectBySlug(slug: string) {
-  return await client.fetch(
-    groq`*[_type == "project" && slug.current == $slug][0] {
-      title,
-      "projectType": projectType,
-      "video": mainVideo.asset->url,
-      "image": mainImage.asset->url,
-      description,
-      externalLink,
-      category,
-      _createdAt
-    }`, 
-    { slug }
-  );
+  if (!projectId || projectId === 'unconfigured') return null;
+  try {
+    return await client.fetch(
+      groq`*[_type == "project" && slug.current == $slug][0] {
+        title,
+        "projectType": projectType,
+        "video": mainVideo.asset->url,
+        "image": mainImage.asset->url,
+        description,
+        externalLink,
+        category,
+        _createdAt
+      }`,
+      { slug }
+    );
+  } catch (error) {
+    console.warn(`Failed to fetch project by slug (${slug}) from Sanity:`, error);
+    return null;
+  }
 }

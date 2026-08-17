@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -14,6 +14,7 @@ export default function HeroAlt() {
   const bottomText = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLDivElement>(null);
   const imageRef = useRef<HTMLDivElement>(null);
+  const [videoError, setVideoError] = useState(false);
 
   useGSAP(() => {
     const tl = gsap.timeline({
@@ -41,12 +42,17 @@ export default function HeroAlt() {
     <section ref={container} className="relative h-screen w-full bg-stone-950 overflow-hidden flex items-center justify-center">
       
       {/* 1. The Video (The Background/End Goal) */}
-      <div ref={videoRef} className="absolute inset-0 z-0 w-full h-full">
-        <video 
-          src="/victoria-reel.mp4" 
-          autoPlay muted loop playsInline
-          className="w-full h-full object-cover"
-        />
+      <div ref={videoRef} className="absolute inset-0 z-0 w-full h-full bg-stone-900">
+        {!videoError ? (
+          <video
+            src="/victoria-reel.mp4"
+            autoPlay muted loop playsInline
+            onError={() => setVideoError(true)}
+            className="w-full h-full object-cover"
+          />
+        ) : (
+          <div className="w-full h-full bg-gradient-to-br from-stone-900 via-stone-950 to-black" />
+        )}
         <div className="absolute inset-0 bg-black/40" />
       </div>
 
